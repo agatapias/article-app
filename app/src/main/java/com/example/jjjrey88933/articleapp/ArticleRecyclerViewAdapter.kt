@@ -25,7 +25,6 @@ class ArticleRecyclerViewAdapter(private var articleList: List<Article>) : Recyc
     }
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
-        // TODO make better design, choose information to input in recycler list
         Log.d(TAG, "onBindViewHolder starts")
         if (articleList.isEmpty()) {
             holder.image.setImageResource(R.drawable.placeholder)
@@ -52,7 +51,6 @@ class ArticleRecyclerViewAdapter(private var articleList: List<Article>) : Recyc
         if (newArticles != null) {
             articleList = newArticles
         }
-        //Log.d(TAG, "new articles: ${newArticles[0]}")
         notifyDataSetChanged()
     }
 

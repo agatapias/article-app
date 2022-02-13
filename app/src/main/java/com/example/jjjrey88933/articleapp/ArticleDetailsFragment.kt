@@ -1,31 +1,25 @@
 package com.example.jjjrey88933.articleapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_article_details.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TAG = "ArticleDetailsFragment"
+private const val ARG_ARTICLE = "article"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ArticleDetailsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ArticleDetailsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var article: Article? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate starts")
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            article = it.getParcelable(ARG_ARTICLE)
         }
     }
 
@@ -34,26 +28,39 @@ class ArticleDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        Log.d(TAG, "onCreateView starts")
         return inflater.inflate(R.layout.fragment_article_details, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (article == null) {
+            details_image.setImageResource(R.drawable.placeholder)
+            details_title.context
+        } else {
+            Picasso.get()
+                .load(article!!.imageUrl)
+                .error(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder)
+                .into(details_image)
+
+            details_published_at.text = article!!.publishedAt.take(10)
+            details_updated_at.text = article!!.updatedAt.take(10)
+            details_title.text = article!!.title
+            details_news_site.text = article!!.newsSite
+            details_summary.text = article!!.summary
+        }
+//        super.onViewCreated(view, savedInstanceState)
+    }
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ArticleDetailsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(art: Article?) =
             ArticleDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putParcelable(ARG_ARTICLE, art)
                 }
+                Log.d(TAG, "fragment new instance")
             }
+
     }
 }

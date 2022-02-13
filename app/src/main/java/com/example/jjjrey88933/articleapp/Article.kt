@@ -15,4 +15,6 @@ class Article(
     override fun toString(): String {
         return "Article(id=$id, title='$title', url='$url', imageUrl='$imageUrl', newsSite='$newsSite', summary='$summary', publishedAt='$publishedAt', updatedAt='$updatedAt', featured=$featured)"
     }
+
+
 }
