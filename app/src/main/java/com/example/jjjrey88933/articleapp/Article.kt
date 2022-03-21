@@ -1,13 +1,15 @@
 package com.example.jjjrey88933.articleapp
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import org.json.JSONArray
 
 @Parcelize
-
+@Entity
 class Article(
-    var id: Int, var title: String, var url: String,
+    @PrimaryKey var id: Int, var title: String, var url: String,
     var imageUrl: String, var newsSite: String, var summary: String,
     var publishedAt: String, var updatedAt: String, var featured: Boolean
 ) : Parcelable {

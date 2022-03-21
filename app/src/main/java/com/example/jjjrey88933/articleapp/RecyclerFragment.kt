@@ -1,16 +1,26 @@
 package com.example.jjjrey88933.articleapp
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.article_item.*
 import kotlinx.android.synthetic.main.fragment_recycler.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 private const val TAG = "RecyclerFragment"
 
@@ -52,20 +62,48 @@ class RecyclerFragment : Fragment(), RecyclerViewClickListener.OnRecyclerClickLi
                 Log.d(TAG, t.toString())
             }
         })
+
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onItemShortClick(view: View, position: Int) {
-        //TODO show link
-        Log.d(TAG, "onItemshortlick starts")
         val article = articleRecyclerViewAdapter.getArticle(position)
-//        supportFragmentManager.beginTransaction().add(R.id.recycler_view, ArticleDetailsFragment.newInstance(article), "ArticleFrag")
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))?.addToBackStack(null)?.commit()
+        val getIntent = Intent(Intent.ACTION_VIEW, Uri.parse(article?.url))
+        startActivity(getIntent)
     }
 
     override fun onItemLongClick(view: View, position: Int) {
-        TODO("Not yet implemented")
+//        val article = articleRecyclerViewAdapter.getArticle(position)
+//        activity?.supportFragmentManager?.beginTransaction()
+//            ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))?.addToBackStack(null)?.commit()
+        Log.d(TAG, "onItemLongClick called")
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.fragment_container, FavFragment.newInstance())?.addToBackStack(null)?.commit()
+
+    }
+
+    override fun onItemDoubleClick(view: View, position: Int) {
+        Log.d(TAG, "onItemDoubleClick called")
+        val article = articleRecyclerViewAdapter.getArticle(position)
+        val ref = this
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = AppDatabase.getInstance(ref.requireContext())
+
+            ref.activity?.runOnUiThread {
+                if (article != null) {
+                    Log.d(TAG, "onItemDoubleClick: added to database")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        db.articleDao().insertArticles(article)
+                    }
+                }
+            }
+        }
+
+//        item_button.setBackgroundResource(R.drawable.ic_baseline_favorite_red_24)
+//        val db = AppDatabase.getInstance(this.requireContext())
+//        if (article != null) {
+//            db.articleDao().insertArticles(article)
+//        }
     }
 
     companion object {

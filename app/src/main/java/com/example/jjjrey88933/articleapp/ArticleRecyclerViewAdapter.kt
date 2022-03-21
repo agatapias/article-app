@@ -4,10 +4,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.article_item.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "ArtRecyclerViewAdapt"
 
@@ -40,6 +45,11 @@ class ArticleRecyclerViewAdapter(private var articleList: List<Article>) : Recyc
             holder.title.text = articleItem.title
             holder.newsSite.text = articleItem.newsSite
             holder.date.text = articleItem.publishedAt.take(10) // first 10 chars needed
+
+//            holder.button.setOnClickListener {
+//                Log.d(TAG, "button clicked")
+//                holder.button.setBackgroundResource(R.drawable.ic_baseline_favorite_red_24)
+//            }
         }
     }
 
@@ -51,7 +61,18 @@ class ArticleRecyclerViewAdapter(private var articleList: List<Article>) : Recyc
         if (newArticles != null) {
             articleList = newArticles
         }
+//        val ref = view.context
+//
+//        view.context?.runOnUiThread
+//        CoroutineScope(Dispatchers.IO).launch {
+//            this@ArticleRecyclerViewAdapter.r
+//            view@MainActivity.runOnUiThread(java.lang.Runnable {
+//                notifyDataSetChanged()
+//            })
+//        }
+
         notifyDataSetChanged()
+
     }
 
     fun getArticle(position: Int) : Article? {

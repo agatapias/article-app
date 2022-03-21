@@ -43,11 +43,17 @@ class ArticleDetailsFragment : Fragment() {
                 .placeholder(R.drawable.placeholder)
                 .into(details_image)
 
-            details_published_at.text = article!!.publishedAt.take(10)
-            details_updated_at.text = article!!.updatedAt.take(10)
+            details_published_at.text = "Published at: ${article!!.publishedAt.take(10)}"
+            details_updated_at.text = "Updated at: ${article!!.updatedAt.take(10)}"
             details_title.text = article!!.title
             details_news_site.text = article!!.newsSite
             details_summary.text = article!!.summary
+            details_url.text = article!!.url
+        }
+
+        details_button.setOnClickListener {
+            Log.d(TAG, "button clicked")
+            details_button.setBackgroundResource(R.drawable.ic_baseline_favorite_red_24)
         }
 //        super.onViewCreated(view, savedInstanceState)
     }
