@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -67,19 +68,17 @@ class RecyclerFragment : Fragment(), RecyclerViewClickListener.OnRecyclerClickLi
     }
 
     override fun onItemShortClick(view: View, position: Int) {
+        Log.d(TAG, "onItemShortClick called")
         val article = articleRecyclerViewAdapter.getArticle(position)
         val getIntent = Intent(Intent.ACTION_VIEW, Uri.parse(article?.url))
         startActivity(getIntent)
     }
 
     override fun onItemLongClick(view: View, position: Int) {
-//        val article = articleRecyclerViewAdapter.getArticle(position)
-//        activity?.supportFragmentManager?.beginTransaction()
-//            ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))?.addToBackStack(null)?.commit()
         Log.d(TAG, "onItemLongClick called")
+        val article = articleRecyclerViewAdapter.getArticle(position)
         activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.fragment_container, FavFragment.newInstance())?.addToBackStack(null)?.commit()
-
+            ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))?.addToBackStack(null)?.commit()
     }
 
     override fun onItemDoubleClick(view: View, position: Int) {
@@ -98,12 +97,6 @@ class RecyclerFragment : Fragment(), RecyclerViewClickListener.OnRecyclerClickLi
                 }
             }
         }
-
-//        item_button.setBackgroundResource(R.drawable.ic_baseline_favorite_red_24)
-//        val db = AppDatabase.getInstance(this.requireContext())
-//        if (article != null) {
-//            db.articleDao().insertArticles(article)
-//        }
     }
 
     companion object {

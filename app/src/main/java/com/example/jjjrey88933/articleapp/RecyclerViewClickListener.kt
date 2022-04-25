@@ -5,6 +5,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import java.lang.Exception
 
 
 private const val TAG = "RecyclerViewClickListener"
@@ -19,6 +20,7 @@ class RecyclerViewClickListener(context: Context, recyclerView: RecyclerView, pr
     }
 
     private val gestureDetector = GestureDetector(context, object  : GestureDetector.SimpleOnGestureListener() {
+
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             if (e != null) {
                 val childView = recyclerView.findChildViewUnder(e.x, e.y)
@@ -26,14 +28,6 @@ class RecyclerViewClickListener(context: Context, recyclerView: RecyclerView, pr
                     listener.onItemShortClick(childView, recyclerView.getChildAdapterPosition(childView))
             }
             return true
-        }
-
-        override fun onLongPress(e: MotionEvent?) {
-            if (e != null) {
-                val childView = recyclerView.findChildViewUnder(e.x, e.y)
-                if (childView != null)
-                    listener.onItemLongClick(childView, recyclerView.getChildAdapterPosition(childView))
-            }
         }
 
         override fun onDoubleTap(e: MotionEvent?): Boolean {
@@ -45,6 +39,13 @@ class RecyclerViewClickListener(context: Context, recyclerView: RecyclerView, pr
             return true
         }
 
+        override fun onLongPress(e: MotionEvent?) {
+            if (e != null) {
+                val childView = recyclerView.findChildViewUnder(e.x, e.y)
+                if (childView != null)
+                    listener.onItemLongClick(childView, recyclerView.getChildAdapterPosition(childView))
+            }
+        }
     })
 
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {

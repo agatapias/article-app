@@ -13,6 +13,8 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:isScrollContainer="true"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical" >
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>

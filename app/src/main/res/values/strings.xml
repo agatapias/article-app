@@ -3,4 +3,6 @@
     <string name="menu_favourites">Favourites</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="undo_string">UNDO</string>
+    <string name="recycler_title_text">Articles</string>
 </resources>

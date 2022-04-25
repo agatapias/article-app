@@ -4,15 +4,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.article_item.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 
 private const val TAG = "ArtRecyclerViewAdapt"
 
@@ -21,35 +19,70 @@ class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     var title: TextView = view.findViewById(R.id.item_title)
     var newsSite: TextView = view.findViewById(R.id.item_news_site)
     var date: TextView = view.findViewById(R.id.item_date)
+    var cardView: CardView = view.findViewById(R.id.article_cardView)
 }
 
-class ArticleRecyclerViewAdapter(private var articleList: List<Article>) : RecyclerView.Adapter<ArticleViewHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.article_item, parent, false)
-        return ArticleViewHolder(view)
+class FavViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    var image: ImageView = view.findViewById(R.id.fav_image)
+    var date: TextView = view.findViewById(R.id.fav_date)
+    var title: TextView = view.findViewById(R.id.fav_title)
+}
+
+class ArticleRecyclerViewAdapter(private var articleList: List<Article>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (parent.id) {
+            R.id.recycler_view -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.article_item, parent, false)
+                ArticleViewHolder(view)
+            }
+            R.id.fav_view -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.favourite_item, parent, false)
+                FavViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
     }
 
-    override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
-        Log.d(TAG, "onBindViewHolder starts")
-        if (articleList.isEmpty()) {
-            holder.image.setImageResource(R.drawable.placeholder)
-            holder.title.context
-        } else {
-            val articleItem = articleList[position]
-            Picasso.get()
-                .load(articleItem.imageUrl)
-                .error(R.drawable.placeholder)
-                .placeholder(R.drawable.placeholder)
-                .into(holder.image)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is ArticleViewHolder -> {
+                if (articleList.isEmpty()) {
+                    holder.image.setImageResource(R.drawable.placeholder)
+                    holder.title.context
+                } else {
+                    val articleItem = articleList[position]
+                    Picasso.get()
+                        .load(articleItem.imageUrl)
+                        .error(R.drawable.placeholder)
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.image)
 
-            holder.title.text = articleItem.title
-            holder.newsSite.text = articleItem.newsSite
-            holder.date.text = articleItem.publishedAt.take(10) // first 10 chars needed
+                    holder.title.text = articleItem.title
+                    holder.newsSite.text = articleItem.newsSite
+                    holder.date.text = articleItem.publishedAt.take(10) // first 10 chars needed
 
-//            holder.button.setOnClickListener {
-//                Log.d(TAG, "button clicked")
-//                holder.button.setBackgroundResource(R.drawable.ic_baseline_favorite_red_24)
-//            }
+                    holder.cardView.animation =
+                        AnimationUtils.loadAnimation(holder.itemView.context, R.anim.article_recycler_anim)
+                }
+            }
+            is FavViewHolder -> {
+                Log.d(TAG, articleList.toString())
+                if (articleList.isEmpty()) {
+                    holder.image.setImageResource(R.drawable.placeholder)
+                    holder.title.context
+                } else {
+                    val articleItem = articleList[position]
+                    Picasso.get()
+                        .load(articleItem.imageUrl)
+                        .error(R.drawable.placeholder)
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.image)
+
+                    holder.title.text = articleItem.title
+                    holder.date.text = articleItem.publishedAt.take(10) // first 10 chars needed
+                }
+            }
         }
     }
 
@@ -61,15 +94,6 @@ class ArticleRecyclerViewAdapter(private var articleList: List<Article>) : Recyc
         if (newArticles != null) {
             articleList = newArticles
         }
-//        val ref = view.context
-//
-//        view.context?.runOnUiThread
-//        CoroutineScope(Dispatchers.IO).launch {
-//            this@ArticleRecyclerViewAdapter.r
-//            view@MainActivity.runOnUiThread(java.lang.Runnable {
-//                notifyDataSetChanged()
-//            })
-//        }
 
         notifyDataSetChanged()
 
