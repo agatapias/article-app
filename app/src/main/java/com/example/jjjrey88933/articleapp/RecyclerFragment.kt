@@ -8,10 +8,13 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.article_item.*
 import kotlinx.android.synthetic.main.fragment_recycler.*
 import kotlinx.coroutines.CoroutineScope
@@ -69,33 +72,52 @@ class RecyclerFragment : Fragment(), RecyclerViewClickListener.OnRecyclerClickLi
 
     override fun onItemShortClick(view: View, position: Int) {
         Log.d(TAG, "onItemShortClick called")
-        val article = articleRecyclerViewAdapter.getArticle(position)
-        val getIntent = Intent(Intent.ACTION_VIEW, Uri.parse(article?.url))
-        startActivity(getIntent)
+
+        view.animate().scaleX(0.9f).scaleY(0.9f).setDuration(100).withEndAction {
+            val article = articleRecyclerViewAdapter.getArticle(position)
+            val getIntent = Intent(Intent.ACTION_VIEW, Uri.parse(article?.url))
+            startActivity(getIntent)
+
+            view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100)
+        }
     }
 
     override fun onItemLongClick(view: View, position: Int) {
         Log.d(TAG, "onItemLongClick called")
-        val article = articleRecyclerViewAdapter.getArticle(position)
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))?.addToBackStack(null)?.commit()
+        view.animate().alpha(0.6f).scaleX(0.98f).scaleY(0.98f).setDuration(500).withEndAction {
+            val article = articleRecyclerViewAdapter.getArticle(position)
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))
+                ?.addToBackStack(null)?.commit()
+
+            view.animate().alpha(1.0f).scaleX(1.0f).scaleY(1.0f).setDuration(100)
+        }
     }
 
     override fun onItemDoubleClick(view: View, position: Int) {
         Log.d(TAG, "onItemDoubleClick called")
-        val article = articleRecyclerViewAdapter.getArticle(position)
-        val ref = this
-        CoroutineScope(Dispatchers.IO).launch {
-            val db = AppDatabase.getInstance(ref.requireContext())
 
-            ref.activity?.runOnUiThread {
-                if (article != null) {
-                    Log.d(TAG, "onItemDoubleClick: added to database")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        db.articleDao().insertArticles(article)
+        view.animate().scaleX(0.9f).scaleY(0.9f).setDuration(100).withEndAction {
+
+            val mySnackbar = Snackbar.make(view, "Added items to favourites!!", Snackbar.LENGTH_SHORT)
+            mySnackbar.show()
+
+            val article = articleRecyclerViewAdapter.getArticle(position)
+            val ref = this
+            CoroutineScope(Dispatchers.IO).launch {
+                val db = AppDatabase.getInstance(ref.requireContext())
+
+                ref.activity?.runOnUiThread {
+                    if (article != null) {
+                        Log.d(TAG, "onItemDoubleClick: added to database")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            db.articleDao().insertArticles(article)
+                        }
                     }
                 }
             }
+
+            view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100)
         }
     }
 

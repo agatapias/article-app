@@ -150,17 +150,26 @@ class FavFragment : Fragment(), RecyclerViewClickListener.OnRecyclerClickListene
     }
 
     override fun onItemShortClick(view: View, position: Int) {
-        val article = articleRecyclerViewAdapter.getArticle(position)
-        if (article != null) {
-            val getIntent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
-            startActivity(getIntent)
+        view.animate().scaleX(0.8f).scaleY(0.8f).setDuration(100).withEndAction {
+            val article = articleRecyclerViewAdapter.getArticle(position)
+            if (article != null) {
+                val getIntent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
+                startActivity(getIntent)
+            }
+
+            view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100)
         }
     }
 
     override fun onItemLongClick(view: View, position: Int) {
-        val article = articleRecyclerViewAdapter.getArticle(position)
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))?.addToBackStack(null)?.commit()
+        view.animate().alpha(0.6f).scaleX(0.98f).scaleY(0.98f).setDuration(500).withEndAction {
+            val article = articleRecyclerViewAdapter.getArticle(position)
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.fragment_container, ArticleDetailsFragment.newInstance(article))
+                ?.addToBackStack(null)?.commit()
+
+            view.animate().alpha(1.0f).scaleX(1.0f).scaleY(1.0f).setDuration(100)
+        }
     }
 
     override fun onItemDoubleClick(view: View, position: Int) {
