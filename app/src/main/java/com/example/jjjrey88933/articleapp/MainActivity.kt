@@ -28,10 +28,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_favourites ->  {
-                if (item.actionView != null) {
-                    val scaledown = AnimationUtils.loadAnimation(this, R.anim.scale_down)
-                    item.actionView.startAnimation(scaledown)
-                }
                 val currFrag = this.supportFragmentManager.findFragmentByTag("FAV_FRAGMENT")
                 // check if fragment already exists
                 if (currFrag == null) this.supportFragmentManager?.beginTransaction()
